@@ -1,0 +1,37 @@
+---
+import Header from '../components/Header.astro';
+import { getAllPagesWithSlugs, getPageBySlug } from './lib/api';
+
+// get static paths for all pages in the CMS, using function with typescript types
+
+export const getStaticPaths = async () => {
+  const allPages = await getAllPagesWithSlugs();
+  return {
+    paths: allPages?.map((page) => `/pages/${page.slug}`) || [],
+    fallback: false,
+  };
+};
+
+const { slug } = Astro.params;
+const page = await getPageBySlug(slug);
+---
+
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>{page.title}</title>
+    <meta name="viewport" content="width=device-width" />
+    <link
+      rel="stylesheet"
+      type="text/css">
+  </head>
+  <body>
+    <Header />
+    <div class="flex flex-col p-10">
+      <div class="mb-5 text-4xl font-bold">{page.title}</div>
+      <article class="prose lg:prose-xl">
+        {page.content}
+      </article>
+    </div>
+  </body>
+</html>
